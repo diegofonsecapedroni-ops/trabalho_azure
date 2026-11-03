@@ -1,3 +1,4 @@
+
 services:
   api:
     image: ghcr.io/diegofonsecapedroni-ops/trabalho_azure:latest
@@ -5,3 +6,26 @@ services:
     ports:
       - "127.0.0.1:8000:8000"
     restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.4
+    container_name: meu-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: TroqueEstaSenha123!
+      MYSQL_DATABASE: trabalho_azure
+      MYSQL_USER: api_user
+      MYSQL_PASSWORD: TroqueEstaSenhaApi123!
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mysql_data:
