@@ -5,6 +5,11 @@ services:
     container_name: minha-api-python
     ports:
       - "127.0.0.1:8000:8000"
+    environment:
+      DB_HOST: mysql
+      DB_USER: api_user
+      DB_PASSWORD: TroqueEstaSenhaApi123!
+      DB_NAME: trabalho_azure
     restart: unless-stopped
     depends_on:
       mysql:
