@@ -2,7 +2,6 @@
 import json
 import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
-
 import mysql.connector
 
 
@@ -11,12 +10,10 @@ class MinhaAPI(BaseHTTPRequestHandler):
         caminho = self.path.split("?")[0]
 
         if caminho in ("/", "/health"):
-            resposta = {
+            self.enviar_json(200, {
                 "mensagem": "Minha primeira API Python está funcionando!",
                 "status": "ok"
-            }
-
-            self.enviar_json(200, resposta)
+            })
 
         elif caminho == "/db":
             try:
@@ -26,7 +23,6 @@ class MinhaAPI(BaseHTTPRequestHandler):
                     password=os.getenv("DB_PASSWORD"),
                     database=os.getenv("DB_NAME", "trabalho_azure")
                 )
-
                 conexao.close()
 
                 self.enviar_json(200, {
@@ -34,10 +30,10 @@ class MinhaAPI(BaseHTTPRequestHandler):
                     "banco": "MySQL conectado"
                 })
 
-            except Exception as erro:
+            except Exception:
                 self.enviar_json(503, {
                     "status": "erro",
-                    "mensagem": str(erro)
+                    "mensagem": "Nao foi possivel conectar ao MySQL"
                 })
 
         else:
@@ -45,7 +41,6 @@ class MinhaAPI(BaseHTTPRequestHandler):
 
     def enviar_json(self, codigo, dados):
         conteudo = json.dumps(dados, ensure_ascii=False).encode("utf-8")
-
         self.send_response(codigo)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(conteudo)))
