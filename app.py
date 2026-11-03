@@ -4,7 +4,7 @@ import json
 
 class MinhaAPI(BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path in ("/", "/health"):
+        if self.path.split("?")[0] in ("/", "/health"):
             resposta = {
                 "mensagem": "Minha primeira API Python está funcionando!",
                 "status": "ok"
